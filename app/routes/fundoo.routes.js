@@ -4,4 +4,6 @@ module.exports = (app) => {
     app.get('/',(_req,res) => res.json({"message":"Welcome to fundo notes"}))
     // Create a new User
     app.post('/createUser',user.createUser)
+    // Retrieve all Users
+    app.get('/findAllUser',user.findAllUser)
 }

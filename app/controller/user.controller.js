@@ -41,6 +41,23 @@ class UserRegistration {
             }
         })
     }
+
+    findAllUser = (_req, res) => {
+        var responseResult = {}
+        userService.findAllUser((err, data) => {
+            if (err) {
+                responseResult.success = false;
+                responseResult.message = "Could not find users";
+                res.status(400).send(responseResult)
+            }
+            else {
+                responseResult.success = true
+                responseResult.data = data
+                responseResult.message = "Users found successfully."
+                res.status(200).send(responseResult)
+            }
+        })
+    }
 }
 
 module.exports = new UserRegistration()

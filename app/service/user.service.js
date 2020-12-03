@@ -6,6 +6,12 @@ class UserService{
             err?callback(err,null) : callback(null,result)
         })
     }
+
+    findAllUser =(data,callback) => {
+        userRoute.findAll(data,(err,result) =>{
+            err?callback(err,null) : callback(null,result)
+        })
+    }
 }
 
 module.exports = new UserService()
