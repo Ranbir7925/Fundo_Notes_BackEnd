@@ -58,6 +58,22 @@ class UserRegistration {
             }
         })
     }
+
+    findOneUser = (req, res) => {
+        var responseResult = {}
+        userService.findOneUser(req.params.userId, (err, data) => {
+            if (err) {
+                responseResult.success = false;
+                responseResult.message = "Could not find users by provided id";
+                res.status(400).send(responseResult)
+            } else {
+                responseResult.success = true
+                responseResult.data = data
+                responseResult.message = `Users found successfully by id= ${req.params.userId}.`;
+                res.status(200).send(responseResult)
+            }
+        })
+    }
 }
 
 module.exports = new UserRegistration()

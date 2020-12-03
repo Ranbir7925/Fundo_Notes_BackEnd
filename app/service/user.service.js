@@ -12,6 +12,11 @@ class UserService{
             err?callback(err,null) : callback(null,result)
         })
     }
+    findOneUser = (data,callback)=>{
+        userRoute.findOne(data,(err,result)=>{
+            err ? callback(err, null) : callback(null, result)
+        })
+    }
 }
 
 module.exports = new UserService()

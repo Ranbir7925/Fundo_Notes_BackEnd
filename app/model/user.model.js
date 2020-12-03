@@ -44,6 +44,13 @@ class UserModel {
             err ? callback(err, null) : callback(null, result)
         })
     }
+
+    findOne = (userId, callback) => {
+        User.findById(userId, (err, result) => {
+            err ? callback(err, null) : callback(null, result)
+
+        })
+    }
 }
 
 module.exports = new UserModel()
