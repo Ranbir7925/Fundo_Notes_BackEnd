@@ -6,8 +6,8 @@ class UserRegistration {
         const schema = joi.object({
             firstName: joi.string().min(3).required(),
             lastName: joi.string().min(3).required(),
-            emailId: joi.string().required(),
-            password: joi.string().required()
+            emailId: joi.string().regex(/^[0-9a-zA-Z]+[.]*[0-9a-zA-z]*[@][a-zA-Z]+([.][a-zA-Z]+){1,3}$/).required(),
+            password: joi.string().regex(/((?=.*\\d)(?=.*[a-z]?)(?=.*[A-Z])(?=.*[@#$%]){1}.{8,})$/).required()
         })
         return schema.validate(data)
     }
