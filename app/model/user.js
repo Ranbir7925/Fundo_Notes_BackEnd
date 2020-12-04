@@ -11,7 +11,7 @@ const userSchema = mongoose.Schema({
         min: 3,
         required: true
     },
-    email: {
+    emailId: {
         type: String,
         required: true
     },
@@ -29,7 +29,7 @@ class UserModel {
             const user = new User({
                 firstName: data.firstName,
                 lastName: data.lastName,
-                email: data.email,
+                emailId: data.emailId,
                 password: data.password
             })
             user.save()
@@ -51,6 +51,13 @@ class UserModel {
 
         })
     }
+
+    updateUser = (userId, data, callback) => {
+        User.findByIdAndUpdate(userId, data, (err) => {
+            err ? callback(err, null) : callback(null, data)
+        })
+    }
+
 }
 
 module.exports = new UserModel()

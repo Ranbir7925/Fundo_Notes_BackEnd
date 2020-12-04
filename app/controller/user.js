@@ -1,18 +1,20 @@
-const userService = require('../service/user.service.js')
+const userService = require('../service/user')
+const logger = require('../../logger/logger')
 const joi = require('joi')
 class UserRegistration {
     validateData = (data) => {
         const schema = joi.object({
             firstName: joi.string().min(3).required(),
             lastName: joi.string().min(3).required(),
-            email: joi.string().required(),
+            emailId: joi.string().required(),
             password: joi.string().required()
         })
         return schema.validate(data)
     }
+    
     createUser = (req, res) => {
         var responseResult = {}
-        var { error } = this.validateData(req.body)
+        const { error } = this.validateData(req.body)
         if (error) {
             responseResult.success = false;
             responseResult.message = "Could not create a new user";
@@ -23,17 +25,19 @@ class UserRegistration {
             var userContent = {
                 firstName: req.body.firstName,
                 lastName: req.body.lastName,
-                email: req.body.email,
+                emailId: req.body.emailId,
                 password: req.body.password
             }
         }
 
         userService.createUser(userContent, (err, data) => {
             if (err) {
+                logger.error("Error occcured while creating user")
                 responseResult.success = false;
                 responseResult.message = "Could not create a new user";
                 res.status(400).send(responseResult)
             } else {
+                logger.info("Greeting created successfully")
                 responseResult.success = true;
                 responseResult.data = data;
                 responseResult.message = "user created successfully";
@@ -46,11 +50,13 @@ class UserRegistration {
         var responseResult = {}
         userService.findAllUser((err, data) => {
             if (err) {
+                logger.error("Error occcured while finding user")
                 responseResult.success = false;
                 responseResult.message = "Could not find users";
                 res.status(400).send(responseResult)
             }
             else {
+                logger.info("user found successfully")
                 responseResult.success = true
                 responseResult.data = data
                 responseResult.message = "Users found successfully."
@@ -63,14 +69,35 @@ class UserRegistration {
         var responseResult = {}
         userService.findOneUser(req.params.userId, (err, data) => {
             if (err) {
+                logger.error("Error occcured while finding")
                 responseResult.success = false;
                 responseResult.message = "Could not find users by provided id";
                 res.status(400).send(responseResult)
             } else {
+                logger.info("User found successfully by provided id")
                 responseResult.success = true
                 responseResult.data = data
                 responseResult.message = `Users found successfully by id= ${req.params.userId}.`;
                 res.status(200).send(responseResult)
+            }
+        })
+    }
+
+    updateOneUser = (req, res) => {
+        var responseResult = {}
+        userService.updateOneUser(req.params.userId, req.body, (err, data) => {
+            if (err) {
+                logger.error("Error occcured while updating user details")
+                responseResult.success = false;
+                responseResult.message = "Could not update useer details with the given id";
+                res.status(400).send(responseResult);
+            }
+            else {
+                logger.info("user details updated successfully")
+                responseResult.success = true;
+                responseResult.data = data;
+                responseResult.message = "User details updated successfully.";
+                res.status(201).send(responseResult)
             }
         })
     }
