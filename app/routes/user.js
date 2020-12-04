@@ -7,6 +7,9 @@ module.exports = (app) => {
     // Retrieve all Users
     app.get('/user',user.findAllUser)
     // Retrieve User by Id
-    app.get('/user/:userId',user.findOneUser)
+    app.get('/user/:userId',user.findOneUser)    
+    // Retrieve User by Id
     app.put('/user/:userId',user.updateOneUser)
+    // Delete User by Id
+    app.delete('/user/:userId',user.deleteUser)
 }

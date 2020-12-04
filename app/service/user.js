@@ -22,6 +22,11 @@ class UserService {
             err ? callback(err, null) : callback(null, result)
         })
     }
+    deleteUser = (userId, callback) => {
+        userRoute.deleteUser(userId, (err, result) => {
+            err ? callback(err, null) : callback(null, result)
+        })
+    }
 }
 
 module.exports = new UserService()

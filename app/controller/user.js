@@ -11,7 +11,7 @@ class UserRegistration {
         })
         return schema.validate(data)
     }
-    
+
     createUser = (req, res) => {
         var responseResult = {}
         const { error } = this.validateData(req.body)
@@ -98,6 +98,24 @@ class UserRegistration {
                 responseResult.data = data;
                 responseResult.message = "User details updated successfully.";
                 res.status(201).send(responseResult)
+            }
+        })
+    }
+
+    deleteUser =(req,res) => {
+        var responseResult = {}
+        userService.deleteUser(req.params.userId, (err, data) => {
+            if (err) {
+                logger.error("Error occcured while deleting user details")
+                responseResult.success = false;
+                responseResult.message = "Could not delete user details with the given id";
+                res.status(400).send(responseResult);
+            } else {
+                logger.info("User details deleted successfully")
+                responseResult.success = true;
+                responseResult.data = data;
+                responseResult.message = "User details deleted ";
+                res.status(200).send(responseResult);
             }
         })
     }

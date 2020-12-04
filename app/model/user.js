@@ -58,6 +58,11 @@ class UserModel {
         })
     }
 
+    deleteUser = (userId, callback) => {
+        User.findByIdAndDelete(userId, (err, data) => {
+            err ? callback(err, null) : callback(null, data)
+        })
+    }
 }
 
 module.exports = new UserModel()
