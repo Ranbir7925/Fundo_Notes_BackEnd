@@ -5,10 +5,19 @@ const joi = require('joi')
 class UserRegistration {
     validateData = (data) => {
         const schema = joi.object({
-            firstName: joi.string().min(3).required(),
-            lastName: joi.string().min(3).required(),
-            emailId: joi.string().regex(/^[0-9a-zA-Z]+[.]*[0-9a-zA-z]*[@][a-zA-Z]+([.][a-zA-Z]+){1,3}$/).required(),
-            password: joi.string().regex(/(?=.*[A-Z].*)(?=.*[0-9].*)([a-zA-Z0-9]{4,}[!@#$%^&*()_+][a-zA-Z0-9]{3,})/).required()
+            firstName: joi.string().min(3).required().messages({
+                'string.min': 'Firstname must have minimum 2 characters.',
+                'string.empty': 'Firstname can not be empty'}),
+            lastName: joi.string().min(3).required().messages({
+                'string.min': 'Lastname must have minimum 2 characters.',
+                'string.empty': 'Lastname can not be empty'}),
+            emailId: joi.string().regex(/^[0-9a-zA-Z]+[.]*[0-9a-zA-z]*[@][a-zA-Z]+([.][a-zA-Z]+){1,3}$/).required().messages({
+                'string.pattern.base': 'emailId should be in format --> someone@example.com .',
+                'string.empty': 'emailId can not be empty'}),
+            password: joi.string().min(8).regex(/(?=.*[A-Z].*)(?=.*[0-9].*)([a-zA-Z0-9]{4,}[!@#$%^&*()_+][a-zA-Z0-9]{3,})/).required().messages({
+                'string.pattern.base': 'Pasword must be alphanumeric and must have atleast 1 special char.',
+                'string.min': 'name must have minimum 8 characters.',
+                'string.empty': 'name can not be empty'}),
         })
         return schema.validate(data)
     }
