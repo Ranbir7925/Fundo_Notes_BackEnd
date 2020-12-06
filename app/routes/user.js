@@ -12,4 +12,6 @@ module.exports = (app) => {
     app.put('/user/:userId',user.updateOneUser)
     // Delete User by Id
     app.delete('/user/:userId',user.deleteUser)
+    //Login user
+    app.post('/login',user.loginUser)
 }

@@ -1,17 +1,24 @@
 const userService = require('../service/user')
 const logger = require('../../logger/logger')
 const joi = require('joi')
+
 class UserRegistration {
     validateData = (data) => {
         const schema = joi.object({
             firstName: joi.string().min(3).required(),
             lastName: joi.string().min(3).required(),
             emailId: joi.string().regex(/^[0-9a-zA-Z]+[.]*[0-9a-zA-z]*[@][a-zA-Z]+([.][a-zA-Z]+){1,3}$/).required(),
-            password: joi.string().regex(/((?=.*\\d)(?=.*[a-z]?)(?=.*[A-Z])(?=.*[@#$%]){1}.{8,})$/).required()
+            password: joi.string().regex(/(?=.*[A-Z].*)(?=.*[0-9].*)([a-zA-Z0-9]{4,}[!@#$%^&*()_+][a-zA-Z0-9]{3,})/).required()
         })
         return schema.validate(data)
     }
-
+    validateDataForLogin = (data) => {
+        const schema = joi.object({
+            emailId: joi.string().regex(/^[0-9a-zA-Z]+[.]*[0-9a-zA-z]*[@][a-zA-Z]+([.][a-zA-Z]+){1,3}$/).required(),
+            password: joi.string().regex(/(?=.*[A-Z].*)(?=.*[0-9].*)([a-zA-Z0-9]{4,}[!@#$%^&*()_+][a-zA-Z0-9]{3,})/).required()
+        })
+        return schema.validate(data)
+    }
     createUser = (req, res) => {
         var responseResult = {}
         const { error } = this.validateData(req.body)
@@ -102,7 +109,7 @@ class UserRegistration {
         })
     }
 
-    deleteUser =(req,res) => {
+    deleteUser = (req, res) => {
         var responseResult = {}
         userService.deleteUser(req.params.userId, (err, data) => {
             if (err) {
@@ -118,6 +125,30 @@ class UserRegistration {
                 res.status(200).send(responseResult);
             }
         })
+    }
+    loginUser = (req, res) => {
+        var responseResult = {}
+        const { error } = this.validateDataForLogin(req.body);
+        if (error) {
+            responseResult.success = false;
+            responseResult.message = "Could not delete user details with the given id";
+            responseResult.error = error.details[0].message;
+            res.status(400).send(responseResult);
+        } else {
+            userService.loginUser(req.body, (err, result) => {
+                if (err) {
+                    responseResult.success = false;
+                    responseResult.message = "login failed";
+                    responseResult.error = err;
+                    res.status(422).send(responseResult)
+                }else{
+                    responseResult.success = true;
+                    responseResult.data = result;
+                    responseResult.message = "logged in successfuly";
+                    res.status(200).send(responseResult)
+                }
+            })
+        }
     }
 }
 

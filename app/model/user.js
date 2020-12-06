@@ -63,6 +63,29 @@ class UserModel {
             err ? callback(err, null) : callback(null, data)
         })
     }
+
+    loginUser = (data, callback) => {
+        User.findOne({ emailId: data.emailId }, (err, result) => {
+            if (err) {
+                callback(err, null)
+            }
+            else if (result != null) {
+                if (data.password == result.password) {
+                    let resutlData = {
+                        id: result._id,
+                        firstName: result.firstName,
+                        lastName: result.lastName,
+                        emailId: result.emailId
+                    }
+                    callback(null, resutlData)
+                } else {
+                    callback("Password not correct")
+                }
+            } else {
+                callback('user not found')
+            }
+        })
+    }
 }
 
 module.exports = new UserModel()

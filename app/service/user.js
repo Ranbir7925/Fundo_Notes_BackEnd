@@ -1,29 +1,34 @@
-const userRoute = require('../model/user')
+const userModel = require('../model/user')
 
 class UserService {
     createUser = (data, callback) => {
-        userRoute.create(data, (err, result) => {
+        userModel.create(data, (err, result) => {
             err ? callback(err, null) : callback(null, result)
         })
     }
 
     findAllUser = (data, callback) => {
-        userRoute.findAll(data, (err, result) => {
+        userModel.findAll(data, (err, result) => {
             err ? callback(err, null) : callback(null, result)
         })
     }
     findOneUser = (data, callback) => {
-        userRoute.findOne(data, (err, result) => {
+        userModel.findOne(data, (err, result) => {
             err ? callback(err, null) : callback(null, result)
         })
     }
     updateOneUser = (userId, data, callback) => {
-        userRoute.updateUser(userId, data, (err, result) => {
+        userModel.updateUser(userId, data, (err, result) => {
             err ? callback(err, null) : callback(null, result)
         })
     }
     deleteUser = (userId, callback) => {
-        userRoute.deleteUser(userId, (err, result) => {
+        userModel.deleteUser(userId, (err, result) => {
+            err ? callback(err, null) : callback(null, result)
+        })
+    }
+    loginUser = (data,callback) => {
+        userModel.loginUser(data,(err,result)=>{
             err ? callback(err, null) : callback(null, result)
         })
     }
