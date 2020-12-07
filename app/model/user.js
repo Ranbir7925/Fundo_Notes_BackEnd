@@ -13,10 +13,12 @@ const userSchema = mongoose.Schema({
     },
     emailId: {
         type: String,
+        unique: true,
         required: true
     },
     password: {
         type: String,
+        min: 8,
         required: true
     }
 })
@@ -24,17 +26,29 @@ const userSchema = mongoose.Schema({
 var User = mongoose.model("User", userSchema)
 
 class UserModel {
-    create = (data, callback) => {
+    registerUser = (data, callback) => {
+
         try {
-            const user = new User({
-                firstName: data.firstName,
-                lastName: data.lastName,
-                emailId: data.emailId,
-                password: data.password
+            User.findOne({emailId:data.emailId},(err,result)=>{
+                if(err){
+                    callback(err,null);
+                }
+                else if(result != null){
+                    callback(null,'email_exits')
+                }
+                else{
+                    const user = new User({
+                        firstName: data.firstName,
+                        lastName: data.lastName,
+                        emailId: data.emailId,
+                        password: data.password
+                    })
+                    user.save()
+                    callback(null, user)
+                }
             })
-            user.save()
-            callback(null, user)
-        } catch (error) {
+        }
+        catch (error) {
             callback(error, null)
         }
     }
@@ -45,44 +59,36 @@ class UserModel {
         })
     }
 
-    findOne = (userId, callback) => {
-        User.findById(userId, (err, result) => {
-            err ? callback(err, null) : callback(null, result)
+    // findOne = (userId, callback) => {
+    //     User.findById(userId, (err, result) => {
+    //         err ? callback(err, null) : callback(null, result)
 
-        })
-    }
+    //     })
+    // }
 
-    updateUser = (userId, data, callback) => {
-        User.findByIdAndUpdate(userId, data, (err) => {
-            err ? callback(err, null) : callback(null, data)
-        })
-    }
+    // updateUser = (userId, data, callback) => {
+    //     User.findByIdAndUpdate(userId, data, (err) => {
+    //         err ? callback(err, null) : callback(null, data)
+    //     })
+    // }
 
-    deleteUser = (userId, callback) => {
-        User.findByIdAndDelete(userId, (err, data) => {
-            err ? callback(err, null) : callback(null, data)
-        })
-    }
+    // deleteUser = (userId, callback) => {
+    //     User.findByIdAndDelete(userId, (err, data) => {
+    //         err ? callback(err, null) : callback(null, data)
+    //     })
+    // }
 
     loginUser = (data, callback) => {
         User.findOne({ emailId: data.emailId }, (err, result) => {
+            console.log(result, data.emailId);
             if (err) {
                 callback(err, null)
             }
             else if (result != null) {
-                if (data.password == result.password) {
-                    let resutlData = {
-                        id: result._id,
-                        firstName: result.firstName,
-                        lastName: result.lastName,
-                        emailId: result.emailId
-                    }
-                    callback(null, resutlData)
-                } else {
-                    callback("Password not correct")
-                }
-            } else {
-                callback('user not found')
+                callback(null, result)
+            }
+            else {
+                callback("User not fount")
             }
         })
     }

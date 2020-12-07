@@ -7,28 +7,39 @@ class UserRegistration {
         const schema = joi.object({
             firstName: joi.string().min(3).required().messages({
                 'string.min': 'Firstname must have minimum 2 characters.',
-                'string.empty': 'Firstname can not be empty'}),
+                'string.empty': 'Firstname can not be empty'
+            }),
             lastName: joi.string().min(3).required().messages({
                 'string.min': 'Lastname must have minimum 2 characters.',
-                'string.empty': 'Lastname can not be empty'}),
+                'string.empty': 'Lastname can not be empty'
+            }),
             emailId: joi.string().regex(/^[0-9a-zA-Z]+[.]*[0-9a-zA-z]*[@][a-zA-Z]+([.][a-zA-Z]+){1,3}$/).required().messages({
                 'string.pattern.base': 'emailId should be in format --> someone@example.com .',
-                'string.empty': 'emailId can not be empty'}),
+                'string.empty': 'emailId can not be empty'
+            }),
             password: joi.string().min(8).regex(/(?=.*[A-Z].*)(?=.*[0-9].*)([a-zA-Z0-9]{4,}[!@#$%^&*()_+][a-zA-Z0-9]{3,})/).required().messages({
                 'string.pattern.base': 'Pasword must be alphanumeric and must have atleast 1 special char.',
-                'string.min': 'name must have minimum 8 characters.',
-                'string.empty': 'name can not be empty'}),
+                'string.min': 'password must have minimum 8 characters.',
+                'string.empty': 'password can not be empty'
+            }),
         })
         return schema.validate(data)
     }
     validateDataForLogin = (data) => {
         const schema = joi.object({
-            emailId: joi.string().regex(/^[0-9a-zA-Z]+[.]*[0-9a-zA-z]*[@][a-zA-Z]+([.][a-zA-Z]+){1,3}$/).required(),
-            password: joi.string().regex(/(?=.*[A-Z].*)(?=.*[0-9].*)([a-zA-Z0-9]{4,}[!@#$%^&*()_+][a-zA-Z0-9]{3,})/).required()
+            emailId: joi.string().regex(/^[0-9a-zA-Z]+[.]*[0-9a-zA-z]*[@][a-zA-Z]+([.][a-zA-Z]+){1,3}$/).required().messages({
+                'string.pattern.base': 'emailId should be in format --> someone@example.com .',
+                'string.empty': 'emailId can not be empty'
+            }),
+            password: joi.string().min(8).regex(/(?=.*[A-Z].*)(?=.*[0-9].*)([a-zA-Z0-9]{4,}[!@#$%^&*()_+][a-zA-Z0-9]{3,})/).required().messages({
+                'string.pattern.base': 'Pasword must be alphanumeric and must have atleast 1 special char.',
+                'string.min': 'password must have minimum 8 characters.',
+                'string.empty': 'password can not be empty'
+            }),
         })
         return schema.validate(data)
     }
-    createUser = (req, res) => {
+    registerUser = (req, res) => {
         var responseResult = {}
         const { error } = this.validateData(req.body)
         if (error) {
@@ -46,14 +57,21 @@ class UserRegistration {
             }
         }
 
-        userService.createUser(userContent, (err, data) => {
+        userService.registerUser(userContent, (err, data) => {
             if (err) {
                 logger.error("Error occcured while creating user")
                 responseResult.success = false;
                 responseResult.message = "Could not create a new user";
+                responseResult.error = err;
                 res.status(400).send(responseResult)
-            } else {
-                logger.info("Greeting created successfully")
+            } else if (data == 'email_exits') {
+                logger.info("User already exists with this email id")
+                responseResult.success = false;
+                responseResult.message = "User already exists with this email id";
+                res.status(404).send(responseResult)
+            }
+            else {
+                logger.info("user created successfully")
                 responseResult.success = true;
                 responseResult.data = data;
                 responseResult.message = "user created successfully";
@@ -81,66 +99,66 @@ class UserRegistration {
         })
     }
 
-    findOneUser = (req, res) => {
-        var responseResult = {}
-        userService.findOneUser(req.params.userId, (err, data) => {
-            if (err) {
-                logger.error("Error occcured while finding")
-                responseResult.success = false;
-                responseResult.message = "Could not find users by provided id";
-                res.status(400).send(responseResult)
-            } else {
-                logger.info("User found successfully by provided id")
-                responseResult.success = true
-                responseResult.data = data
-                responseResult.message = `Users found successfully by id= ${req.params.userId}.`;
-                res.status(200).send(responseResult)
-            }
-        })
-    }
+    // findOneUser = (req, res) => {
+    //     var responseResult = {}
+    //     userService.findOneUser(req.params.userId, (err, data) => {
+    //         if (err) {
+    //             logger.error("Error occcured while finding")
+    //             responseResult.success = false;
+    //             responseResult.message = "Could not find users by provided id";
+    //             res.status(400).send(responseResult)
+    //         } else {
+    //             logger.info("User found successfully by provided id")
+    //             responseResult.success = true
+    //             responseResult.data = data
+    //             responseResult.message = `Users found successfully by id= ${req.params.userId}.`;
+    //             res.status(200).send(responseResult)
+    //         }
+    //     })
+    // }
 
-    updateOneUser = (req, res) => {
-        var responseResult = {}
-        userService.updateOneUser(req.params.userId, req.body, (err, data) => {
-            if (err) {
-                logger.error("Error occcured while updating user details")
-                responseResult.success = false;
-                responseResult.message = "Could not update useer details with the given id";
-                res.status(400).send(responseResult);
-            }
-            else {
-                logger.info("user details updated successfully")
-                responseResult.success = true;
-                responseResult.data = data;
-                responseResult.message = "User details updated successfully.";
-                res.status(201).send(responseResult)
-            }
-        })
-    }
+    // updateOneUser = (req, res) => {
+    //     var responseResult = {}
+    //     userService.updateOneUser(req.params.userId, req.body, (err, data) => {
+    //         if (err) {
+    //             logger.error("Error occcured while updating user details")
+    //             responseResult.success = false;
+    //             responseResult.message = "Could not update useer details with the given id";
+    //             res.status(400).send(responseResult);
+    //         }
+    //         else {
+    //             logger.info("user details updated successfully")
+    //             responseResult.success = true;
+    //             responseResult.data = data;
+    //             responseResult.message = "User details updated successfully.";
+    //             res.status(201).send(responseResult)
+    //         }
+    //     })
+    // }
 
-    deleteUser = (req, res) => {
-        var responseResult = {}
-        userService.deleteUser(req.params.userId, (err, data) => {
-            if (err) {
-                logger.error("Error occcured while deleting user details")
-                responseResult.success = false;
-                responseResult.message = "Could not delete user details with the given id";
-                res.status(400).send(responseResult);
-            } else {
-                logger.info("User details deleted successfully")
-                responseResult.success = true;
-                responseResult.data = data;
-                responseResult.message = "User details deleted ";
-                res.status(200).send(responseResult);
-            }
-        })
-    }
+    // deleteUser = (req, res) => {
+    //     var responseResult = {}
+    //     userService.deleteUser(req.params.userId, (err, data) => {
+    //         if (err) {
+    //             logger.error("Error occcured while deleting user details")
+    //             responseResult.success = false;
+    //             responseResult.message = "Could not delete user details with the given id";
+    //             res.status(400).send(responseResult);
+    //         } else {
+    //             logger.info("User details deleted successfully")
+    //             responseResult.success = true;
+    //             responseResult.data = data;
+    //             responseResult.message = "User details deleted ";
+    //             res.status(200).send(responseResult);
+    //         }
+    //     })
+    // }
     loginUser = (req, res) => {
         var responseResult = {}
         const { error } = this.validateDataForLogin(req.body);
         if (error) {
             responseResult.success = false;
-            responseResult.message = "Could not delete user details with the given id";
+            responseResult.message = "login failed";
             responseResult.error = error.details[0].message;
             res.status(400).send(responseResult);
         } else {
@@ -148,9 +166,9 @@ class UserRegistration {
                 if (err) {
                     responseResult.success = false;
                     responseResult.message = "login failed";
-                    responseResult.error = err;
+                    responseResult.error = err
                     res.status(422).send(responseResult)
-                }else{
+                } else {
                     responseResult.success = true;
                     responseResult.data = result;
                     responseResult.message = "logged in successfuly";
