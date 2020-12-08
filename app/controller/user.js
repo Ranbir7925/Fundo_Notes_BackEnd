@@ -1,6 +1,7 @@
 const userService = require('../service/user')
 const logger = require('../../logger/logger')
 const joi = require('joi')
+const JWT=require('../../jwt/jwt') 
 
 class UserRegistration {
     validateData = (data) => {
@@ -118,6 +119,12 @@ class UserRegistration {
                     res.status(422).send(responseResult)
                 } else {
                     responseResult.success = true;
+                    const payload={
+                        id:result._id,
+                        emailId:result.emailId
+                    }
+                    const generatedToken = JWT.generateToken(payload)
+                    responseResult.token = generatedToken;
                     responseResult.data = result;
                     responseResult.message = "logged in successfuly";
                     res.status(200).send(responseResult)
