@@ -43,8 +43,15 @@ class UserModel {
                         emailId: data.emailId,
                         password: data.password
                     })
-                    user.save()
-                    callback(null, user)
+                    user.save((err,data)=>{
+                        if(err){
+                            callback(err,null)
+                        }
+                        else{
+                            callback(null, data)
+                        }
+                    })
+                    
                 }
             })
         }
@@ -59,28 +66,8 @@ class UserModel {
         })
     }
 
-    // findOne = (userId, callback) => {
-    //     User.findById(userId, (err, result) => {
-    //         err ? callback(err, null) : callback(null, result)
-
-    //     })
-    // }
-
-    // updateUser = (userId, data, callback) => {
-    //     User.findByIdAndUpdate(userId, data, (err) => {
-    //         err ? callback(err, null) : callback(null, data)
-    //     })
-    // }
-
-    // deleteUser = (userId, callback) => {
-    //     User.findByIdAndDelete(userId, (err, data) => {
-    //         err ? callback(err, null) : callback(null, data)
-    //     })
-    // }
-
     loginUser = (data, callback) => {
         User.findOne({ emailId: data.emailId }, (err, result) => {
-            console.log(result, data.emailId);
             if (err) {
                 callback(err, null)
             }

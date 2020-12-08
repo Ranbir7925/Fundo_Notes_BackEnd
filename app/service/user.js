@@ -11,7 +11,6 @@ class UserService {
                 emailId: data.emailId,
                 password: hash,
             }
-            console.log(user);
             userModel.registerUser(user, (err, result) => {
                 err ? callback(err, null) : callback(null, result)
             })

@@ -1,6 +1,5 @@
 const user = require('../controller/user')
 module.exports = (app) => {
-    // Define a simple route to display Message at the homepage
     // Create a new User
     app.post('/user',user.registerUser)
     // // Retrieve all Users
