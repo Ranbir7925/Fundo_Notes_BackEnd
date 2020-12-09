@@ -79,6 +79,24 @@ class UserModel {
             }
         })
     }
+
+    resetPassword = (data,callback) =>{
+        User.findOne({emailId:data.emailId},(err,result)=>{
+            if(err){
+                callback(err,null)
+            }
+            else{
+                User.updateOne({emailId:data.emailId},{password:data.password},(err,result)=>{
+                    if(err){
+                        callback(err,null)
+                    }
+                    else{
+                        callback(null,result)
+                    }
+                })
+            }
+        })
+    }
 }
 
 module.exports = new UserModel()

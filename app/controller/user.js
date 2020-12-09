@@ -132,6 +132,16 @@ class UserRegistration {
             })
         }
     }
+
+    resetPassword = (req,res) => {
+        var responseResult = {}
+        let token = ''
+        try {
+            token = JWT.generateToken()
+        } catch (error) {
+            
+        }
+    }
 }
 
 module.exports = new UserRegistration()
